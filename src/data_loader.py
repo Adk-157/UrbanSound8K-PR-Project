@@ -18,6 +18,17 @@ def add_noise(y, noise_factor=0.005):
     noise = np.random.randn(len(y))
     return y + noise_factor * noise
 
+def time_shift(y, shift_max=0.2, sr=22050):
+    shift = int(np.random.uniform(-shift_max, shift_max) * sr)
+    return np.roll(y, shift)
+
+def pitch_shift(y, sr=22050, n_steps=2):
+    return librosa.effects.pitch_shift(y, sr, n_steps=np.random.randint(-n_steps, n_steps))
+
+def time_stretch(y, rate_range=(0.8, 1.2)):
+    rate = np.random.uniform(rate_range[0], rate_range[1])
+    return librosa.effects.time_stretch(y, rate)
+
 # ---------------------------
 # 2. METADATA LOADER
 # ---------------------------
@@ -49,6 +60,9 @@ def load_audio(file_path, sr=22050, clean=True, augment=False):
             y = remove_silence(y)
         if augment:
             y = add_noise(y)
+            y = time_shift(y)
+            y = pitch_shift(y, sr)
+            y = time_stretch(y)
         return y, sr
     except Exception as e:
         print(f"❌ Error loading {file_path}: {e}")
