@@ -127,7 +127,7 @@ import pywt
 from tqdm import tqdm
 from scipy.stats import entropy
 
-metadata_csv = "/kaggle/input/updatedata/UrbanSound8K_augmented.csv"
+metadata_csv = "data/UrbanSound8K_augmented.csv"
 audio_dir = "/kaggle/input/urbansound8k"
 
 metadata = pd.read_csv(metadata_csv)
