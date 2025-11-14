@@ -30,7 +30,6 @@ UrbanSound8K-PR-Project/
 │── figures/
 │── notebooks/
 │── models/
-│── project.zip
 │── Main.py
 │── README.md
 │── REPORT.md
