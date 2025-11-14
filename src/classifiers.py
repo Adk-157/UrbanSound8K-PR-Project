@@ -15,6 +15,16 @@ from tensorflow.keras import layers, models
 import warnings
 import os
 
+BEST_MODEL = None
+X_TEST = None
+Y_TEST = None
+CLASS_NAMES = [
+    "air_conditioner", "car_horn", "children_playing", "dog_bark",
+    "drilling", "engine_idling", "gun_shot", "jackhammer", 
+    "siren", "street_music"
+]
+
+
 #  Configuration 
 RANDOM_SEED = 42
 TEST_SIZE = 0.2
@@ -140,30 +150,76 @@ def evaluate_model_performance(model, X_test, y_test, model_name="Model"):
     
     return acc, f1_macro, y_pred
 
+def set_best_model(model):
+    """
+    Stores the best trained model globally.
+    """
+    global BEST_MODEL
+    BEST_MODEL = model
+
+def set_test_split(X_test, y_test):
+    global X_TEST, Y_TEST
+    X_TEST = X_test
+    Y_TEST = y_test
+
+def get_best_trained_model():
+    if BEST_MODEL is None:
+        raise ValueError("BEST_MODEL is not set. Did you run the pipeline?")
+    return BEST_MODEL
+
+def get_test_split():
+    if X_TEST is None or Y_TEST is None:
+        raise ValueError("Test split not set. Run full pipeline first.")
+    return X_TEST, Y_TEST
+
+
 
 # MAIN EXECUTION FUNCTION 
 
 def run_full_pipeline(DATA_PATH):
     X_train_reduced, X_test_reduced, y_train, y_test, n_classes = load_and_preprocess_data(DATA_PATH)
     VI_train = get_mahalanobis_vi(X_train_reduced)
-    
-    knn_models, knn_params = tune_and_train_knn(X_train_reduced, y_train, VI_train, n_classes)
+
+    # ---------- 1. Train all models ----------
+    knn_models, knn_params = tune_and_train_knn(
+        X_train_reduced, y_train, VI_train, n_classes
+    )
     baseline_models = train_baseline_models(X_train_reduced, y_train)
 
     all_models = {**knn_models, **baseline_models}
 
-    mlp_model = build_and_train_mlp(X_train_reduced, y_train, X_test_reduced, y_test, n_classes, epochs=50)
+    # DL MLP model
+    mlp_model = build_and_train_mlp(
+        X_train_reduced, y_train,
+        X_test_reduced, y_test,
+        n_classes, epochs=50
+    )
     all_models['DL MLP'] = mlp_model
-    
-    results = {}
-    for name, model in all_models.items():
-        acc, f1_macro, y_pred = evaluate_model_performance(model, X_test_reduced, y_test, name)
-        results[name] = {'Accuracy': acc, 'F1-Macro': f1_macro}
 
-    comparison_df = pd.DataFrame({
-        'Model': results.keys(),
-        'Accuracy': [r['Accuracy'] for r in results.values()],
-        'F1-Macro': [r['F1-Macro'] for r in results.values()]
-    }).set_index('Model').sort_values(by='F1-Macro', ascending=False)
-    
-    return comparison_df
+    # ---------- 2. Evaluate all models ----------
+    results = {}
+    preds_dict = {}
+
+    for name, model in all_models.items():
+        acc, f1_macro, y_pred = evaluate_model_performance(
+            model, X_test_reduced, y_test, name
+        )
+        results[name] = {
+            'Accuracy': acc,
+            'F1-Macro': f1_macro
+        }
+        preds_dict[name] = y_pred
+
+    # ---------- 3. Build comparison table ----------
+    comparison_df = pd.DataFrame(results).T
+    comparison_df = comparison_df.sort_values("F1-Macro", ascending=False)
+
+    # ---------- 4. Identify BEST MODEL ----------
+    best_model_name = comparison_df.index[0]
+    best_model_obj = all_models[best_model_name]
+
+    # ---------- 5. Store globally for Main.py ----------
+    set_best_model(best_model_obj)
+    set_test_split(X_test_reduced, y_test)
+
+    return comparison_df, all_models, preds_dict, X_test_reduced, y_test
