@@ -58,10 +58,7 @@ Download from Google Drive and place in the `data/` folder:
 After download, your structure should look like:
 ```
 UrbanSound8K-PR-Project/
-├── data/
-│   └── UrbanSound8K/          # <-- extracted dataset here
-│       ├── audio/
-│       └── metadata/
+├── data/ # <-- extracted dataset here
 ```
 
 ### **3. Install dependencies**
@@ -167,11 +164,11 @@ Full details in `REPORT.md` → Appendix Section.
 ## 📈 Confusion Matrices
 
 All confusion matrices are stored in `/figures/`:
-- `confusion_matrix_euclidean_knn.png`
-- `confusion_matrix_mahalanobis_knn.png`
-- `confusion_matrix_random_forest.png`
-- `confusion_matrix_svm.png`
-- `confusion_matrix_mlp.png`
+- `euclidian.jpeg`
+- `maha.jpeg`
+- `RF.jpeg`
+- `SVM.jpeg`
+- `dlmlp.jpeg`
 
 ---
 
