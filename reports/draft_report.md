@@ -177,12 +177,6 @@ This project demonstrates that **classical Pattern Recognition methods with prop
 
 **Key Takeaway:** Euclidean k-NN with LDA achieved 91.07% accuracy, demonstrating that distance-based methods excel when feature spaces are properly reduced and normalized.
 
-**Future Work:**
-- Explore deeper neural architectures (CNNs on spectrograms)
-- Implement transfer learning with pre-trained audio models
-- Expand dataset through synthetic augmentation
-- Ensemble methods combining classical and deep learning approaches
-
 ---
 
 ## 7. Repository & Dataset Links
@@ -329,4 +323,5 @@ The MLP underperformed compared to classical methods due to:
 **Project Completed:** November 2025  
 **Institution:** Indian Institute of Information Technology, Sri City  
 **Department:** Electronics and Communication Engineering
+
 
