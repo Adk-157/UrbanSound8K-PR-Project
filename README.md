@@ -64,7 +64,7 @@ Place it next to the repo like this:
 
 ```
 /UrbanSound8K-PR-Project
-/UrbanSound8K   <-- downloaded dataset
+/Data   <-- downloaded dataset
 ```
 
 ### **4. Install dependencies**
