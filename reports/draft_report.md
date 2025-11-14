@@ -154,11 +154,11 @@ All confusion matrices are located in:
 ```
 
 Matrices include:
-- `confusion_matrix_euclidean_knn.png`
-- `confusion_matrix_mahalanobis_knn.png`
-- `confusion_matrix_random_forest.png`
-- `confusion_matrix_svm.png`
-- `confusion_matrix_mlp.png`
+- `euclidian.jpeg`
+- `maha.jpeg`
+- `RF.jpeg`
+- `Svm.jpeg`
+- `dlmlp.jpeg`
 
 **Key Observations:**
 - Car Horn and Gun Shot: High precision across all models (distinct spectral signatures)
@@ -329,3 +329,4 @@ The MLP underperformed compared to classical methods due to:
 **Project Completed:** November 2025  
 **Institution:** Indian Institute of Information Technology, Sri City  
 **Department:** Electronics and Communication Engineering
+
