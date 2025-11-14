@@ -213,5 +213,6 @@ Academic Year 2025–26
 ## 📄 License
 
 This project is for academic purposes only.  
-Dataset: UrbanSound8K by J. Salamon, C. Jacoby and J. P. Bello.
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+Dataset: UrbanSound8K by J. Salamon, C. Jacoby and J. P. Bello.
+
