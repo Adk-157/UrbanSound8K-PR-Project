@@ -22,10 +22,7 @@ UrbanSound8K-PR-Project/
 │── src/
 │   ├── data_loader.py
 │   ├── feature_extractor.py
-│   ├── svm_model.py
-│   ├── knn_model.py
-│   ├── rf_model.py
-│   ├── mlp_model.py
+│   ├── classifier.py
 │   └── evaluation.py
 │── figures/
 │── notebooks/
