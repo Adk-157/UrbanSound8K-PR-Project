@@ -196,7 +196,7 @@ Tests cover:
 ## 📝 Documentation
 
 Complete technical report with methodology, results, and analysis:  
-👉 **[REPORT.md](REPORT.md)**
+👉 **[REPORT.md](reports/REPORT.md)**
 
 Additional documentation in `/reports/` folder.
 
