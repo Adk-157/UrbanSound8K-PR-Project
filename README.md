@@ -135,7 +135,7 @@ Extracts 65+ audio features:
 
 | Member             | Contribution                                        |
 | ------------------ | --------------------------------------------------- |
-| **Adk 157**        | Data Loader, Augmentation, Random Forest Classifier |
+| **Adithya Ram S**        | Data Loader, Augmentation, Random Forest Classifier |
 | **Mari Venkatesh** | Feature Extraction, SVM Classifier                  |
 | **Dharun SA**      | Euclidean and Mahalanobis k-NN                      |
 | **E Mano Ranjan**  | Evaluation, Deep Learning MLP                       |
