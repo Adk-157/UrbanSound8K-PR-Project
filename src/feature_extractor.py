@@ -127,67 +127,71 @@ import pywt
 from tqdm import tqdm
 from scipy.stats import entropy
 
-metadata_csv = "data/UrbanSound8K_augmented.csv"
+metadata_csv = "/kaggle/input/updatedata/UrbanSound8K_augmented.csv"
 audio_dir = "/kaggle/input/urbansound8k"
 
 metadata = pd.read_csv(metadata_csv)
-print("Total files in metadata:", len(metadata))
+print(" Total files in metadata:", len(metadata))
+
+
 
 def extract_features_from_audio(y, sr):
     """
     Extracts MFCC, Chroma, Spectral, Temporal, Entropy, Wavelet Energy
-    with Nyquist-safe spectral contrast and resampling.
+    + NEW: Spectral Flux
     """
     try:
-
         if len(y) < 0.25 * sr:
             return None
-
-
+-
         mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
         mfcc_delta = librosa.feature.delta(mfcc)
         mfcc_delta2 = librosa.feature.delta(mfcc, order=2)
+
         mfcc_features = np.hstack([
             np.mean(mfcc, axis=1),
             np.mean(mfcc_delta, axis=1),
             np.mean(mfcc_delta2, axis=1)
-        ])
+        ])  
 
-
+        # --- Chroma ---
         chroma = np.mean(librosa.feature.chroma_stft(y=y, sr=sr).T, axis=0)  # 12
 
-
+        # --- Spectral Features ---
         centroid = np.mean(librosa.feature.spectral_centroid(y=y, sr=sr))
         bandwidth = np.mean(librosa.feature.spectral_bandwidth(y=y, sr=sr))
-
         contrast = np.mean(librosa.feature.spectral_contrast(y=y, sr=sr, n_bands=6, fmin=200.0))
         rolloff = np.mean(librosa.feature.spectral_rolloff(y=y, sr=sr))
-        flatness = np.mean(librosa.feature.spectral_flatness(y=y))
-        spectral_features = [centroid, bandwidth, contrast, rolloff, flatness]
 
+       
+        S = np.abs(librosa.stft(y))
+        flux = np.mean(np.sqrt(np.sum(np.diff(S, axis=1) ** 2, axis=0)))
 
+        spectral_features = [centroid, bandwidth, contrast, rolloff, flux]  # 5
+
+       
         zcr = np.mean(librosa.feature.zero_crossing_rate(y))
         rms = np.mean(librosa.feature.rms(y=y))
-        temporal_features = [zcr, rms]
+        temporal_features = [zcr, rms]  # 2
 
-
-        S = np.abs(librosa.stft(y))
+    
         ps = S / np.sum(S)
         spec_entropy = entropy(np.mean(ps, axis=1))
-        spectral_entropy = [spec_entropy]
+        spectral_entropy = [spec_entropy]  
 
-
+        
         coeffs = pywt.wavedec(y, 'db4', level=5)
-        wavelet_energy = [np.sum(np.square(c)) for c in coeffs]
+        wavelet_energy = [np.sum(np.square(c)) for c in coeffs]  
 
         features = np.hstack([
-            mfcc_features,
-            chroma,
-            spectral_features,
-            temporal_features,
-            spectral_entropy,
-            wavelet_energy
-        ])
+            mfcc_features,      
+            chroma,             
+            spectral_features,  
+            temporal_features,  
+            spectral_entropy,   
+            wavelet_energy       
+        ]) 
+
         return features
 
     except Exception as e:
@@ -195,14 +199,16 @@ def extract_features_from_audio(y, sr):
         return None
 
 
+
 def extract_features_from_dataset(metadata, audio_dir):
     features_list, labels_list = [], []
 
-    print("\nStarting dataset-wide extraction...")
+    print("\n Starting dataset-wide extraction...")
     for i, row in tqdm(metadata.iterrows(), total=len(metadata)):
         fold = row['fold']
         file_name = row['slice_file_name']
         label = row['classID']
+
         file_path = os.path.join(audio_dir, f"fold{fold}", file_name)
 
         if not os.path.exists(file_path):
@@ -210,8 +216,7 @@ def extract_features_from_dataset(metadata, audio_dir):
             continue
 
         try:
-
-            y, sr = librosa.load(file_path, sr=22050, mono=True)
+            y, sr = librosa.load(file_path, sr=22050, mono=True)  
             feats = extract_features_from_audio(y, sr)
             if feats is not None:
                 features_list.append(feats)
@@ -232,6 +237,8 @@ def extract_features_from_dataset(metadata, audio_dir):
     print(f"\n Extraction Complete: {X.shape[0]} samples, {X.shape[1]} features each.")
     return X, y
 
+
+
 X, y = extract_features_from_dataset(metadata, audio_dir)
 
 if X.size > 0:
@@ -240,9 +247,6 @@ if X.size > 0:
     print("\n Saved:")
     print("   X_features.npy ->", X.shape)
     print("   y_labels.npy   ->", y.shape)
-
-X = np.load("X_features.npy")
-y = np.load("y_labels.npy")
 
 
 feature_names = [f"feature_{i+1}" for i in range(X.shape[1])]
