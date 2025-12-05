@@ -153,11 +153,10 @@ def extract_features_from_audio(y, sr):
             np.mean(mfcc_delta, axis=1),
             np.mean(mfcc_delta2, axis=1)
         ])  
+-
+        chroma = np.mean(librosa.feature.chroma_stft(y=y, sr=sr).T, axis=0)  
 
-        # --- Chroma ---
-        chroma = np.mean(librosa.feature.chroma_stft(y=y, sr=sr).T, axis=0)  # 12
-
-        # --- Spectral Features ---
+       
         centroid = np.mean(librosa.feature.spectral_centroid(y=y, sr=sr))
         bandwidth = np.mean(librosa.feature.spectral_bandwidth(y=y, sr=sr))
         contrast = np.mean(librosa.feature.spectral_contrast(y=y, sr=sr, n_bands=6, fmin=200.0))
@@ -167,12 +166,12 @@ def extract_features_from_audio(y, sr):
         S = np.abs(librosa.stft(y))
         flux = np.mean(np.sqrt(np.sum(np.diff(S, axis=1) ** 2, axis=0)))
 
-        spectral_features = [centroid, bandwidth, contrast, rolloff, flux]  # 5
+        spectral_features = [centroid, bandwidth, contrast, rolloff, flux]  
 
        
         zcr = np.mean(librosa.feature.zero_crossing_rate(y))
         rms = np.mean(librosa.feature.rms(y=y))
-        temporal_features = [zcr, rms]  # 2
+        temporal_features = [zcr, rms]  
 
     
         ps = S / np.sum(S)
